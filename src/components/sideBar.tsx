@@ -1,9 +1,14 @@
+import { useLoginStore } from "../utils/store";
 
 interface Props {
-    children?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const Sidebar : React.FC<Props> = ({ children }) => {
+const Sidebar: React.FC<Props> = ({ children }) => {
+  const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
+  const loggedOut = useLoginStore((state) => state.loggedOut);
+  const user = useLoginStore((state) => state.user);
+
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-[#1e2227] h-full text-white left-0 h-full overflow-y-auto z-[999px] ">
@@ -47,52 +52,52 @@ const Sidebar : React.FC<Props> = ({ children }) => {
               Q binary
             </a>
             <ul className="flex space-x-6">
-              <li>
-                <a
-                  href="#"
-                  className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
-                >
-                  Features
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
-                >
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="bg-[#2ea44f] hover:bg-[#2c974b] px-4 py-2 rounded transition-colors"
-                >
-                  Sign Up
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
-                >
-                  Log In
-                </a>
-              </li>
+              {isLoggedIn ? (
+                <>
+                  <li>
+                    <a
+                      href="#"
+                      className="bg-[#2ea44f] hover:bg-[#2c974b] px-4 py-2 rounded transition-colors"
+                    >
+                      Sign Up
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/login"
+                      className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
+                    >
+                      Log In
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <a
+                      href="#"
+                      className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
+                    >
+                     Welcome {user?.username}
+                    </a>
+                  </li>
+
+                  <li>
+                    <button
+                      onClick={loggedOut}
+                      className="hover:bg-[#444] px-4 py-2 rounded transition-colors"
+                    >
+                      Log Out
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </nav>
 
         <div className="p-3 w-full h-[94.3%] overflow-scroll hide-scrollbar">
-            {children}
+          {children}
         </div>
       </div>
     </div>
