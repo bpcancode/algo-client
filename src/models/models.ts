@@ -31,6 +31,15 @@ export interface Visulization {
   voteCount: number;
   isVoted: boolean;
   trendScore: number;
+  algorithm: string;
+}
+
+export interface CreateVisulizationModel {
+  title: string;
+  html: string;
+  css: string;
+  js: string;
+  algorithmId: number;
 }
 
 export type VisulizationFilters = {
@@ -45,3 +54,8 @@ export type VisulizationFilters = {
   IsViewsDecending?: boolean;
   IsVoteDecending?: boolean;
 };
+
+export type Algorithm = {
+  id: number;
+  title: string;
+}

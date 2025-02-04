@@ -52,7 +52,6 @@ function ViewVisulization() {
   };
   return (
     <div className="max-w-7xl h-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* filter bar */}
 
       <div className="flex items-center justify-between mb-8">
         <div>

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useLoginStore } from "../../utils/store";
-import { login } from "../../services/apiService";
+import { login, register } from "../../services/apiService";
 
 
-function Auth() {
+function Auth({ type }: { type: "login" | "register" }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const loggedIn = useLoginStore((state) => state.loggedIn);
@@ -13,25 +13,48 @@ function Auth() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    login({ username, password }).then((res) => {
-      if (res.isSuccess) {
-        if(res.data?.token) {
-            localStorage.setItem("token", res.data.token);
-            loggedIn(res.data.user);
-            localStorage.setItem("token", res.data.token);
+    if (type === "login") {
+      login({ username, password }).then((res) => {
+        if (res.isSuccess) {
+          if(res.data?.token) {
+              localStorage.setItem("token", res.data.token);
+              loggedIn(res.data.user);
+              localStorage.setItem("token", res.data.token);
+          }
+          navigator("/");
+          toast.success("Loggin Success !");
+        } else {
+          toast.error(res.errorMessage);
         }
-        navigator("/");
-        toast.success("Loggin Success !");
-      } else {
-        toast.error(res.errorMessage);
-      }
-    }).catch(() => toast.error("Something went wrong"));
+      }).catch(() => toast.error("Something went wrong"));
+    };
+
+    if(type === "register") {
+      register({ username, password }).then((res) => {
+        if (res.isSuccess) {
+          if(res.data?.token) {
+              localStorage.setItem("token", res.data.token);
+              loggedIn(res.data.user);
+              localStorage.setItem("token", res.data.token);
+          }
+          navigator("/");
+          toast.success("Loggin Success !");
+        } else {2
+          
+          toast.error(res.errorMessage);
+        }
+      }).catch(() => toast.error("Something went wrong"));
+    };
+    
   }
 
+ 
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        <h2 className="text-4xl font-bold  mb-4 text-center">Know Ur Algo</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          {type === "login" ? "Login" : "Register"} </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

@@ -3,13 +3,16 @@ import { cn } from "../../utils/cn";
 import "./codeEditor.css";
 import { Editor } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
-import { createVisulization, fetchAlgorithms } from "../../services/apiService";
-import { Algorithm, CreateVisulizationModel, Visulization } from "../../models/models";
+import { useParams } from "react-router";
+import { fetchAlgorithms, fetchVisulization, likeVisulization } from "../../services/apiService";
+import { Algorithm, Visulization } from "../../models/models";
 import { useDebounce } from "../../hooks/useDbounce";
 import Select from 'react-select';
+import { FaHeart } from "react-icons/fa";
 
-const CodeEditor = (): JSX.Element => {
-  const [visualization] = useState<Visulization | null>(null);
+const CodeViewer = (): JSX.Element => {
+  const { id } = useParams();
+  const [visualization, setVisualization] = useState<Visulization | null>(null);
   const [html, setHtml] = useState<string>("");
   const [css, setCss] = useState<string>("");
   const [js, setJs] = useState<string>("");
@@ -17,66 +20,57 @@ const CodeEditor = (): JSX.Element => {
   const debouncedSetHtml = useDebounce(setHtml, 2000);
   const debouncedSetCss = useDebounce(setCss, 2000);
   const debouncedSetJs = useDebounce(setJs, 2000);
-  const [title, setTitle] = useState<string>("Untitled");
-  const [algorithms, setAlgorithms] = useState<Algorithm[]>([]);
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState<Algorithm | null>(null);
+
+
+  const [liked, setLiked] = useState<boolean>(false);
 
   useEffect(() => {
-      fetchAlgorithms().then((res) => {
+    fetchVisulization(Number(id))
+      .then((res) => {
         if (res.isSuccess) {
-          setAlgorithms(res.data ?? []);
+          setVisualization(res.data);
+          setHtml(res.data?.html ?? "");
+          setCss(res.data?.css ?? "");
+          setJs(res.data?.js ?? "");
+          if(res.data?.isVoted){
+            setLiked(true);
+          }
         } else {
           console.error(res.errorMessage);
         }
-      }).catch((err) => console.error(err));
-  }, []);
+      })
+      .catch((err) => console.error(err));
+  }, [id, liked]);
 
   function handleHtmlChange(value: string | undefined) {
     debouncedSetHtml(value ?? "");
   }
-
   function handleCssChange(value: string | undefined) {
     debouncedSetCss(value ?? "");
   }
-
   function handleJsChange(value: string | undefined) {
     debouncedSetJs(value ?? "");
   }
 
-  function handleSave() {
-
-    if(!selectedAlgorithm) {
-      return;
-    }
-    const data : CreateVisulizationModel = {
-      title,
-      html,
-      css,
-      js,
-      algorithmId: selectedAlgorithm.id
-    }
-    createVisulization(data).then((res) => {
-      if (res.isSuccess) {
-        console.log("Saved");
+  function handleLike(){
+    likeVisulization(visualization?.id!)
+    .then((res) => { 
+      if(res.isSuccess){
+        setLiked(!liked);
       } else {
         console.error(res.errorMessage);
       }
-    }).catch((err) => console.error(err));
-  };
+    })
+    .catch((err) => console.error(err));
+  }
 
   return (
 
     <div className="flex flex-column h-screen bg-dark font-mono color-white overflow-hidden">
     <nav className="flex justify-between items-center bg-darker p-4 border-b border-gray-700">
-      <input type="text" className="text-lg focus:outline-none" value={title} onChange={(e) => setTitle(e.target.value)}/>
-      <Select 
-        className="basic-single w-96 bg-dark"
-        styles={{ control: (base) => ({ ...base, backgroundColor: "#2d3748", color: "black" }) }}
-        classNamePrefix="select Algorithm"
-        options={algorithms.map(x => ({ value: x.id, label: x.title}))}
-        onChange={(selectedOption) => setSelectedAlgorithm(algorithms.find(x => x.id === selectedOption?.value) ?? null)}
-         />
-      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>Save</button>
+      <input type="text" className="text-lg focus:outline-none" value={visualization?.title}/>
+      <p className="text-lg">{visualization?.algorithm}</p>
+      <button className="text-white px-4 py-2 rounded cursor-pointer" onClick={handleLike}><FaHeart size={25} className={liked ? "text-red-400" : ""} /></button>
     </nav>
     <div className="flex flex-column h-full p-5">
       <div className="flex grow">
@@ -133,4 +127,4 @@ const CodeEditor = (): JSX.Element => {
   );
 };
 
-export default CodeEditor;
+export default CodeViewer;

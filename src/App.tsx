@@ -4,6 +4,7 @@ import ViewVisulization from "./pages/Visulization/viewVisulization";
 import CodeEditor from "./pages/editor/codeEditor";
 import Auth from "./pages/auth/auth";
 import "react-toastify/dist/ReactToastify.css";
+import CodeViewer from "./pages/editor/codeViewer";
 
 
 function App() {
@@ -18,8 +19,10 @@ function App() {
             </Sidebar>
           }
         />
-        <Route path="/editor/:id" element={<CodeEditor />} />
-        <Route path="/login" element={<Auth />} />
+        <Route path="/editor" element={<CodeEditor />} />
+        <Route path="/view/:id" element={<CodeViewer />} />
+        <Route path="/login" element={<Auth type="login" />} />
+        <Route path="/register" element={<Auth type="register" />} />
       </Routes>
     </>
   );
