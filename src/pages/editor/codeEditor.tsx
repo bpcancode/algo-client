@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createVisulization, fetchAlgorithms } from "../../services/apiService";
 import { Algorithm, CreateVisulizationModel, Visulization } from "../../models/models";
 import { useDebounce } from "../../hooks/useDbounce";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import Select from 'react-select';
 
 const CodeEditor = (): JSX.Element => {
@@ -26,7 +27,7 @@ const CodeEditor = (): JSX.Element => {
         if (res.isSuccess) {
           setAlgorithms(res.data ?? []);
         } else {
-          console.error(res.errorMessage);
+          
         }
       }).catch((err) => console.error(err));
   }, []);
@@ -57,15 +58,14 @@ const CodeEditor = (): JSX.Element => {
     }
     createVisulization(data).then((res) => {
       if (res.isSuccess) {
-        console.log("Saved");
+        toast.success("Visualization Saved Successfully");
       } else {
-        console.error(res.errorMessage);
+        toast.error(res.errorMessage);
       }
-    }).catch((err) => console.error(err));
+    }).catch((err) => toast.error("Something went wrong. Please try again"));
   };
 
   return (
-
     <div className="flex flex-column h-screen bg-dark font-mono color-white overflow-hidden">
     <nav className="flex justify-between items-center bg-darker p-4 border-b border-gray-700">
       <input type="text" className="text-lg focus:outline-none" value={title} onChange={(e) => setTitle(e.target.value)}/>
@@ -129,6 +129,17 @@ const CodeEditor = (): JSX.Element => {
         />
       </div>
     </div>
+    <ToastContainer
+      position="top-right"
+      transition={Bounce}
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover />
   </div>
   );
 };

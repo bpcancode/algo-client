@@ -4,10 +4,10 @@ import "./codeEditor.css";
 import { Editor } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { fetchAlgorithms, fetchVisulization, likeVisulization } from "../../services/apiService";
-import { Algorithm, Visulization } from "../../models/models";
+import {  fetchVisulization, likeVisulization } from "../../services/apiService";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import { Visulization } from "../../models/models";
 import { useDebounce } from "../../hooks/useDbounce";
-import Select from 'react-select';
 import { FaHeart } from "react-icons/fa";
 
 const CodeViewer = (): JSX.Element => {
@@ -36,11 +36,11 @@ const CodeViewer = (): JSX.Element => {
             setLiked(true);
           }
         } else {
-          console.error(res.errorMessage);
+          toast.error(res.errorMessage);
         }
       })
-      .catch((err) => console.error(err));
-  }, [id, liked]);
+      .catch((err) => toast.error("Something went wrong"));
+  }, [id]);
 
   function handleHtmlChange(value: string | undefined) {
     debouncedSetHtml(value ?? "");
@@ -58,17 +58,17 @@ const CodeViewer = (): JSX.Element => {
       if(res.isSuccess){
         setLiked(!liked);
       } else {
-        console.error(res.errorMessage);
+        toast.error(res.errorMessage);
       }
     })
-    .catch((err) => console.error(err));
+    .catch((err) =>toast.error("Something went wrong"));
   }
 
   return (
 
     <div className="flex flex-column h-screen bg-dark font-mono color-white overflow-hidden">
     <nav className="flex justify-between items-center bg-darker p-4 border-b border-gray-700">
-      <input type="text" className="text-lg focus:outline-none" value={visualization?.title}/>
+      <p  className="text-lg focus:outline-none"> {visualization?.title} </p>
       <p className="text-lg">{visualization?.algorithm}</p>
       <button className="text-white px-4 py-2 rounded cursor-pointer" onClick={handleLike}><FaHeart size={25} className={liked ? "text-red-400" : ""} /></button>
     </nav>
@@ -123,6 +123,17 @@ const CodeViewer = (): JSX.Element => {
         />
       </div>
     </div>
+    <ToastContainer
+      position="top-right"
+      transition={Bounce}
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover />
   </div>
   );
 };
