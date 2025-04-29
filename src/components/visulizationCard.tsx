@@ -1,9 +1,6 @@
 import { FaHeart } from "react-icons/fa";
 import { Visulization } from "../models/models";
 import { NavLink } from "react-router";
-import { useState } from "react";
-
-
 
 function VisulizationCard({ visulization }: { visulization: Visulization }) {
   

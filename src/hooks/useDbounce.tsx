@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 export function useDebounce(cb: (value: string) => void, delay: number) {
   const timeoutRef =  useRef<ReturnType<typeof setTimeout> | null>(null);

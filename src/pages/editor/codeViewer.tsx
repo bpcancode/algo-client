@@ -39,7 +39,7 @@ const CodeViewer = (): JSX.Element => {
           toast.error(res.errorMessage);
         }
       })
-      .catch((err) => toast.error("Something went wrong"));
+      .catch((_err) => toast.error("Something went wrong"));
   }, [id]);
 
   function handleHtmlChange(value: string | undefined) {
@@ -61,7 +61,7 @@ const CodeViewer = (): JSX.Element => {
         toast.error(res.errorMessage);
       }
     })
-    .catch((err) =>toast.error("Something went wrong"));
+    .catch((_err) =>toast.error("Something went wrong"));
   }
 
   return (

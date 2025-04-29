@@ -62,7 +62,7 @@ const CodeEditor = (): JSX.Element => {
       } else {
         toast.error(res.errorMessage);
       }
-    }).catch((err) => toast.error("Something went wrong. Please try again"));
+    }).catch((_err) => toast.error("Something went wrong. Please try again"));
   };
 
   return (
